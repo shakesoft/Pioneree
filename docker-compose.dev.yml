@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: ./aspnet-core
+      dockerfile: src/PionereeDemo.Web.Host/Dockerfile
+    image: pioneree/backend:dev
+    container_name: pioneree-backend-dev
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+      App__ServerRootAddress: https://api-dev.pioneree.com/
+      App__ClientRootAddress: https://dev.pioneree.com/
+      App__CorsOrigins: https://dev.pioneree.com
+      ConnectionStrings__Default: ${PIONEREE_CONNECTION_STRING}
+    ports:
+      - "127.0.0.1:8081:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./react
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: https://api-dev.pioneree.com
+        VITE_API_BASE_URL: https://api-dev.pioneree.com
+    image: pioneree/frontend:dev
+    container_name: pioneree-frontend-dev
+    ports:
+      - "127.0.0.1:8082:80"
+    restart: unless-stopped
